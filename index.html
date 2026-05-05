@@ -952,11 +952,6 @@
         var accepted = S.wasRejected
         ? true
         : Math.random() < (answer.correct ? CONFIG.acceptProbability.correct : CONFIG.acceptProbability.wrong);
-        container.querySelectorAll('.choice-btn').forEach(function(b) {
-          var match = CONFIG.question.answers.find(function(a) { return a.text === b.textContent; });
-          if (match && match.correct) b.classList.add('correct');
-        });
-        if (!answer.correct) btn.classList.add('wrong');
         setTimeout(function() {
           S.bouncerAwait = true;
           showScreen('bouncer');
