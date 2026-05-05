@@ -558,7 +558,7 @@
       event: {
         date:      'FR 24.07 — MO 27.07.2026',
         location:  'Vresse-sur-Semois\na.k.a. BouillonHain',
-        attendees: ['Krakakarst', 'Jella de Versnella'],
+        attendees: ['Krakakarst'],
         rsvp:      'Antworte auf diese Einladung',
       },
       question: {
@@ -991,8 +991,6 @@
       $('detail-date').textContent     = CONFIG.event.date;
       $('detail-location').innerHTML   = CONFIG.event.location.replace(/\n/g, '<br>');
       $('detail-rsvp').textContent     = CONFIG.event.rsvp;
-      $('detail-attendees').innerHTML  = CONFIG.event.attendees
-        .map(function(n) { return '<p class="s-attendee">' + n + '</p>'; }).join('');
       renderSlider();
       if (S.clubReady) return;
       S.clubReady = true;
