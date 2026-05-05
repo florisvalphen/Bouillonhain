@@ -976,12 +976,25 @@
     ══════════════════════════════════════════════════ */
     function showReject() {
       cursorEl.style.display = 'none';
-      var words = ['NEIN.', 'RAUS.'];
-      var subs  = ['Nicht heute Nacht.', 'Komm niemals wieder.', 'Weiter.'];
+      var words = ['NEIN.', 'RAUS.', 'NEIN.', 'NEIN.'];
+      var subs  = [
+        'Nicht heute Nacht.',
+        'Komm niemals wieder.',
+        'Weiter.',
+        'Geh zurück nach Brüssel.',
+        'Du bist zu glücklich.',
+        'Deine Schuhe sind falsch.',
+        'Du siehst aus wie jemand, der Fotos macht.',
+        'Nächstes Mal vielleicht. Aber wahrscheinlich nicht.',
+      ];
       $('reject-word').textContent = words[Math.floor(Math.random() * words.length)];
       $('reject-sub').textContent  = subs [Math.floor(Math.random() * subs.length)];
     }
-    function triggerReject() { S.wasRejected = true; showScreen('reject'); }
+    function triggerReject() {
+      S.wasRejected = true;
+      if (navigator.vibrate) navigator.vibrate([400, 100, 400]);
+      showScreen('reject');
+    }
 
     /* ══════════════════════════════════════════════════
        CLUB SWIPE CAROUSEL
