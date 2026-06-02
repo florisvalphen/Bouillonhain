@@ -382,6 +382,46 @@
       100%{ opacity:0; transform:translateX(-12px) }
     }
 
+    /* ────────────────────────────────
+       SKIP BUTTON
+    ──────────────────────────────── */
+    .skip-btn {
+      position: fixed; bottom: 1.6rem; right: 1.6rem; z-index: 60;
+      background: transparent; border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.22);
+      font-family: 'IBM Plex Mono','Courier New',monospace;
+      font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase;
+      cursor: pointer; padding: 0.45rem 0.8rem;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .skip-btn:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.3); }
+
+    /* ────────────────────────────────
+       TEAM GRID (slide 5)
+    ──────────────────────────────── */
+    .team-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem 1.6rem;
+      margin-top: 1rem;
+    }
+    .team-name {
+      font-size: clamp(0.7rem, 2.8vw, 0.88rem);
+      font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      margin-bottom: 0.18rem;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    }
+    .team-shift {
+      font-size: clamp(0.46rem, 1.8vw, 0.58rem);
+      letter-spacing: 0.28em; text-transform: uppercase; opacity: 0.38;
+      margin-bottom: 0.3rem;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    }
+    .team-members {
+      font-size: clamp(0.58rem, 2.3vw, 0.74rem);
+      opacity: 0.7; line-height: 1.55;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+    }
+
     /* ── REDUCED MOTION ── */
     @media (prefers-reduced-motion: reduce) {
       .strobe-overlay.firing { animation:none; opacity:0 }
@@ -416,11 +456,14 @@
   <div class="grain-overlay" aria-hidden="true"></div>
   <div class="strobe-overlay" id="strobe" aria-hidden="true"></div>
 
+  <!-- Skip queue button (fixed, visible on entry screen) -->
+  <button class="skip-btn" id="btn-skip">direkt rein</button>
+
   <!-- ── SCREEN 1: ENTRY ── -->
   <section class="screen active" id="screen-entry">
     <div class="entry-wrap">
       <p class="entry-title">Bouillonhain</p>
-      <p class="entry-tap">Tippen</p>
+      <p class="entry-tap">weiterklicken</p>
       <p class="entry-rule">— — —</p>
     </div>
   </section>
@@ -537,9 +580,37 @@
         <p class="s-rsvp" id="detail-rsvp">Antworte auf diese Einladung</p>
       </div>
 
+      <!-- Slide 5: Teams -->
+      <div class="club-slide">
+        <p class="s-label" style="margin-top:0">Kollektiv</p>
+        <div class="team-grid">
+          <div>
+            <p class="team-name">Untergrund</p>
+            <p class="team-shift">Late lunch / early dinner Za</p>
+            <p class="team-members">Jelmer, Evelien, Laura, Annika, Anna, Vincent, Machiel, Coen</p>
+          </div>
+          <div>
+            <p class="team-name">Nebel</p>
+            <p class="team-shift">Lunch Zo</p>
+            <p class="team-members">Floris, Lotte, Karsten, Wietze, Niels, Rosa, Flore, Mish</p>
+          </div>
+          <div>
+            <p class="team-name">Exzess</p>
+            <p class="team-shift">Dinner Zo</p>
+            <p class="team-members">Lirry, Thomas, Pelle, Eva, Rozan, Monique, <strong>Joost</strong></p>
+          </div>
+          <div>
+            <p class="team-name">Electroclown</p>
+            <p class="team-shift">Cocktails + snacks Za</p>
+            <p class="team-members">Eli, Rochaya, <strong>Tadesse</strong>, Sven, Joni, Lori, Pim</p>
+          </div>
+        </div>
+      </div>
+
     </div>
     <div class="slide-dots" id="slide-dots" aria-hidden="true">
       <span class="dot active"></span>
+      <span class="dot"></span>
       <span class="dot"></span>
       <span class="dot"></span>
       <span class="dot"></span>
@@ -1013,14 +1084,14 @@
       screen.addEventListener('click', function(e) {
         if (_swipeHandled) { _swipeHandled = false; return; } /* swipe already handled */
         if (e.clientX > window.innerWidth / 2) {
-          if (S.clubIdx < 3) { S.clubIdx++; renderSlider(); }
+          if (S.clubIdx < 4) { S.clubIdx++; renderSlider(); }
         } else {
           if (S.clubIdx > 0) { S.clubIdx--; renderSlider(); }
         }
       });
       document.addEventListener('keydown', function(e) {
         if (!$('screen-club').classList.contains('active')) return;
-        if (e.key === 'ArrowRight' && S.clubIdx < 3) { S.clubIdx++; renderSlider(); }
+        if (e.key === 'ArrowRight' && S.clubIdx < 4) { S.clubIdx++; renderSlider(); }
         if (e.key === 'ArrowLeft'  && S.clubIdx > 0) { S.clubIdx--; renderSlider(); }
       });
       screen.addEventListener('touchstart', function(e) {
@@ -1036,7 +1107,7 @@
         var dy = e.changedTouches[0].clientY - S.touchY;
         if (Math.abs(dx) < Math.abs(dy) * 1.3 || Math.abs(dx) < 38) return;
         _swipeHandled = true; /* prevent the synthesised click from also advancing */
-        if (dx < 0 && S.clubIdx < 3) S.clubIdx++;
+        if (dx < 0 && S.clubIdx < 4) S.clubIdx++;
         if (dx > 0 && S.clubIdx > 0) S.clubIdx--;
         renderSlider();
       }, { passive: true });
@@ -1059,9 +1130,17 @@
     }
 
     function onEntry() {
+      $('btn-skip').style.display = 'none';
       initAudio();
       showScreen('queue');
     }
+
+    $('btn-skip').addEventListener('click', function() {
+      $('btn-skip').style.display = 'none';
+      $('screen-entry').removeEventListener('click', onEntry);
+      initAudio();
+      showScreen('club');
+    });
 
     $('btn-reset').addEventListener('click', function() {
       stopQueueRotation();
@@ -1069,6 +1148,7 @@
       hideVideo();
       crowdStop();
       crowdHide();
+      $('btn-skip').style.display = '';
       showScreen('entry');
       attachEntry();
     });
