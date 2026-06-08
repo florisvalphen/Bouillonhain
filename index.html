@@ -1165,8 +1165,13 @@
     window.addEventListener('resize', function() { resizeCrowd(); buildSilhouettes(); });
     requestAnimationFrame(grainTick);
 
-    switchVideo('entry');
-    attachEntry();
+    if (new URLSearchParams(window.location.search).get('goto') === 'club') {
+      history.replaceState(null, '', window.location.pathname);
+      showScreen('club');
+    } else {
+      switchVideo('entry');
+      attachEntry();
+    }
 
   })();
   </script>
