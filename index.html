@@ -430,19 +430,20 @@
       text-shadow: 0 1px 8px rgba(0,0,0,0.9);
     }
 
-    /* ── ARCHIEF OVERLAY ── */
-    #archief-overlay {
-      position: fixed; inset: 0; z-index: 300;
-      background: #000;
-      opacity: 0; pointer-events: none;
-      transition: opacity 0.35s ease;
+    /* ────────────────────────────────
+       SKIP BUTTON
+    ──────────────────────────────── */
+    .skip-btn {
+      position: fixed; bottom: 1.6rem; right: 1.6rem; z-index: 60;
+      background: transparent; border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.22);
+      font-family: 'IBM Plex Mono','Courier New',monospace;
+      font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase;
+      cursor: pointer; padding: 0.45rem 0.8rem;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s, border-color 0.2s;
     }
-    #archief-overlay.open { opacity: 1; pointer-events: auto; }
-    #archief-frame {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: none;
-    }
+    .skip-btn:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.3); }
 
     /* ── REDUCED MOTION ── */
     @media (prefers-reduced-motion: reduce) {
@@ -478,7 +479,10 @@
   <div class="grain-overlay" aria-hidden="true"></div>
   <div class="strobe-overlay" id="strobe" aria-hidden="true"></div>
 
-<!-- ── SCREEN 1: ENTRY ── -->
+  <!-- Skip queue button -->
+  <button class="skip-btn" id="btn-skip">direkt rein</button>
+
+  <!-- ── SCREEN 1: ENTRY ── -->
   <section class="screen active" id="screen-entry">
     <div class="entry-wrap">
       <p class="entry-title">Bouillonhain</p>
@@ -631,7 +635,7 @@
       <div class="club-slide">
         <p class="s-final">DU BIST<br>EINGELADEN.</p>
         <p class="s-rsvp" id="detail-rsvp">Antworte auf diese Einladung</p>
-        <button class="archief-btn" onclick="openArchief()">Lees de uitnodiging →</button>
+        <a href="archief.html" class="archief-btn">Lees de uitnodiging →</a>
       </div>
 
     </div>
@@ -645,23 +649,7 @@
     <p class="swipe-hint" aria-hidden="true">← vegen</p>
   </section>
 
-  <!-- Archief overlay -->
-  <div id="archief-overlay">
-    <iframe id="archief-frame" src="" title="Archief"></iframe>
-  </div>
-
   <script>
-  /* global overlay functions — called from archief.html iframe */
-  function openArchief() {
-    var overlay = document.getElementById('archief-overlay');
-    var frame   = document.getElementById('archief-frame');
-    if (!frame.src || frame.src === window.location.href) frame.src = 'archief.html';
-    overlay.classList.add('open');
-  }
-  function closeArchief() {
-    document.getElementById('archief-overlay').classList.remove('open');
-  }
-
   (function () {
     'use strict';
 
@@ -1114,6 +1102,9 @@
        CLUB SWIPE CAROUSEL
     ══════════════════════════════════════════════════ */
     function initClub() {
+      if (window.location.hash !== '#club') {
+        history.pushState({screen: 'club'}, '', '#club');
+      }
       S.clubIdx = 0;
       $('detail-date').textContent     = CONFIG.event.date;
       $('detail-location').innerHTML   = CONFIG.event.location.replace(/\n/g, '<br>');
@@ -1173,9 +1164,17 @@
     }
 
     function onEntry() {
+      $('btn-skip').style.display = 'none';
       initAudio();
       showScreen('queue');
     }
+
+    $('btn-skip').addEventListener('click', function() {
+      $('btn-skip').style.display = 'none';
+      $('screen-entry').removeEventListener('click', onEntry);
+      initAudio();
+      showScreen('club');
+    });
 
     $('btn-reset').addEventListener('click', function() {
       stopQueueRotation();
@@ -1183,6 +1182,7 @@
       hideVideo();
       crowdStop();
       crowdHide();
+      $('btn-skip').style.display = '';
       showScreen('entry');
       attachEntry();
     });
@@ -1195,8 +1195,8 @@
     window.addEventListener('resize', function() { resizeCrowd(); buildSilhouettes(); });
     requestAnimationFrame(grainTick);
 
-    if (new URLSearchParams(window.location.search).get('goto') === 'club') {
-      history.replaceState(null, '', window.location.pathname);
+    if (window.location.hash === '#club') {
+      history.replaceState({screen:'club'}, '', '#club');
       showScreen('club');
     } else {
       switchVideo('entry');
