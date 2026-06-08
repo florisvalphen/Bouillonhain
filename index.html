@@ -430,6 +430,20 @@
       text-shadow: 0 1px 8px rgba(0,0,0,0.9);
     }
 
+    /* ── ARCHIEF OVERLAY ── */
+    #archief-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: #000;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    #archief-overlay.open { opacity: 1; pointer-events: auto; }
+    #archief-frame {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
     /* ── REDUCED MOTION ── */
     @media (prefers-reduced-motion: reduce) {
       .strobe-overlay.firing { animation:none; opacity:0 }
@@ -617,7 +631,7 @@
       <div class="club-slide">
         <p class="s-final">DU BIST<br>EINGELADEN.</p>
         <p class="s-rsvp" id="detail-rsvp">Antworte auf diese Einladung</p>
-        <a href="archief.html" class="archief-btn" target="_blank" rel="noopener">Lees de uitnodiging →</a>
+        <button class="archief-btn" onclick="openArchief()">Lees de uitnodiging →</button>
       </div>
 
     </div>
@@ -631,7 +645,23 @@
     <p class="swipe-hint" aria-hidden="true">← vegen</p>
   </section>
 
+  <!-- Archief overlay -->
+  <div id="archief-overlay">
+    <iframe id="archief-frame" src="" title="Archief"></iframe>
+  </div>
+
   <script>
+  /* global overlay functions — called from archief.html iframe */
+  function openArchief() {
+    var overlay = document.getElementById('archief-overlay');
+    var frame   = document.getElementById('archief-frame');
+    if (!frame.src || frame.src === window.location.href) frame.src = 'archief.html';
+    overlay.classList.add('open');
+  }
+  function closeArchief() {
+    document.getElementById('archief-overlay').classList.remove('open');
+  }
+
   (function () {
     'use strict';
 
