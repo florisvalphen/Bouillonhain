@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <title>Archief — Viktor Nachtmeister</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400&family=Caveat:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      background: #000;
+      color: #ddd;
+      font-family: 'IBM Plex Mono', 'Courier New', monospace;
+      font-size: 15px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body { min-height: 100vh; }
+
+    /* ── GRAIN ── */
+    .grain-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      pointer-events: none; opacity: 0.10;
+      background: #fff; filter: url(#grain-filter);
+      will-change: filter;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(0,0,0,0.93);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 0.85rem max(2rem, env(safe-area-inset-left)) 0.85rem max(2rem, env(safe-area-inset-left));
+      display: flex; gap: 2.2rem; align-items: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .nav-link {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+      font-size: 0.58rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: rgba(255,255,255,0.75); }
+    .nav-link.active { color: rgba(255,255,255,0.85); }
+    .nav-sep { color: rgba(255,255,255,0.12); font-size: 0.6rem; }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 4.5rem 2rem max(6rem, calc(env(safe-area-inset-bottom) + 5rem));
+    }
+
+    /* ── DOCUMENT WRAPPER ── */
+    .document { margin-bottom: 0; }
+
+    /* stamp / classification */
+    .doc-stamp {
+      font-size: 0.58rem;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      opacity: 0.3;
+      margin-bottom: 0.6rem;
+    }
+
+    /* main document title */
+    .doc-title {
+      font-size: clamp(0.82rem, 2.8vw, 1rem);
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      opacity: 0.95;
+    }
+
+    /* saga title — spaced letters */
+    .doc-title-spaced {
+      font-size: clamp(0.78rem, 2.6vw, 0.95rem);
+      font-weight: 700;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      opacity: 0.95;
+    }
+
+    .doc-meta {
+      font-size: 0.65rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      opacity: 0.38;
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ── BODY TEXT ── */
+    .doc-body { }
+
+    .doc-body p {
+      font-size: 0.9rem;
+      line-height: 1.82;
+      margin-bottom: 0.75rem;
+      opacity: 0.85;
+    }
+
+    .doc-body p.salutation {
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.55;
+      margin-bottom: 2rem;
+    }
+
+    /* section headers */
+    .doc-body h2 {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.65;
+      margin-top: 2.8rem;
+      margin-bottom: 0.9rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* big callout text */
+    .callout {
+      font-size: clamp(0.82rem, 3vw, 1.05rem);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.95;
+      margin: 1.8rem 0 1.2rem;
+      display: block;
+    }
+
+    /* DYNAMO FEST in handwriting */
+    .handwriting {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(2.4rem, 9vw, 3.8rem);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #fff;
+      display: block;
+      margin: 1.4rem 0 1.8rem;
+      line-height: 1.1;
+    }
+
+    /* italic (Der Einlass beginnt bald.) */
+    .doc-body em {
+      font-style: italic;
+      opacity: 0.7;
+    }
+
+    /* horizontal separator */
+    .separator {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 2.4rem 0;
+    }
+
+    /* bullet lists */
+    .doc-body ul {
+      list-style: none;
+      padding: 0;
+      margin: 0.6rem 0 1.4rem;
+    }
+    .doc-body ul li {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      padding-left: 1.5rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+      opacity: 0.82;
+    }
+    .doc-body ul li::before {
+      content: '—';
+      position: absolute; left: 0;
+      opacity: 0.35;
+      font-size: 0.75rem;
+    }
+
+    /* closing block */
+    .closing {
+      margin-top: 3rem;
+      font-size: 0.82rem;
+      opacity: 0.5;
+      line-height: 2.1;
+      font-style: italic;
+    }
+
+    /* ── SAGA-SPECIFIC ── */
+    .doc-body p.saga-p {
+      font-size: 0.92rem;
+      line-height: 1.92;
+      margin-bottom: 1.3rem;
+      opacity: 0.83;
+      text-align: left;
+    }
+
+    /* divider between the two documents */
+    .doc-divider {
+      border: none;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 7rem 0;
+    }
+
+    @media (max-width: 560px) {
+      .container { padding: 3rem 1.4rem 7rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG grain filter -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <defs>
+      <filter id="grain-filter" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence id="feTurb" type="fractalNoise"
+          baseFrequency="0.67" numOctaves="3" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+      </filter>
+    </defs>
+  </svg>
+  <div class="grain-overlay" aria-hidden="true"></div>
+
+  <nav class="site-nav">
+    <a href="index.html" class="nav-link">← Einlass</a>
+    <span class="nav-sep">|</span>
+    <a href="#brief" class="nav-link active" id="nav-brief">Brief</a>
+    <a href="#saga" class="nav-link" id="nav-saga">Saga</a>
+  </nav>
+
+  <main class="container">
+
+    <!-- ═══════════════════════════════════════
+         DOCUMENT 1 — BRIEF
+    ═══════════════════════════════════════ -->
+    <article class="document" id="brief">
+      <p class="doc-stamp">Ultra Secret // Vertrouwelijk</p>
+      <h1 class="doc-title">Foret VI — Freie Berliner Kulturzone</h1>
+      <p class="doc-meta">Die Letzte Anweisung Von Viktor Nachtmeister</p>
+
+      <div class="doc-body">
+        <p class="salutation">Foretfamilie,</p>
+
+        <p>Vorig jaar werden wij nog de ruimte in geslingerd voor de Space Race. Er werd geopolitiek geramd, kosmisch gedwaald en op interstellaire schaal genoten. Maar terwijl de rest van het heelal nog lag uit te dampen, vonden wij in de Ardennen iets veel verontrustenders: een map.</p>
+        <p>Geen gewone map.</p>
+        <p>Een oude, rokerige, licht vochtige archiefmap, verstopt in Le Moulin d'Orchimont, Vresse-sur-Semois.</p>
+        <p>Op de voorkant stond, in strakke zwarte letters:</p>
+        <span class="callout">Die Letzte Anweisung von Viktor Nachtmeister</span>
+        <p>Voor wie zijn naam niet kent: Viktor Nachtmeister was volgens sommigen portier, volgens anderen clubeigenaar, volgens nog anderen sekteleider. Wat vaststaat, is dat hij begin deze eeuw uit Berlijn verdween nadat hij daar jarenlang had moeten toezien hoe mensen met een veel te opgewekte blik de rij in liepen alsof een club een gezellige vrijmibo is.</p>
+        <p>Viktor wist beter.</p>
+        <p>Hij droomde van iets anders.</p>
+        <p>Geen rij, maar een filter.</p>
+        <p>Geen avondje uit, maar een toestand.</p>
+        <p>Na jaren van stilte blijkt dat Viktor in 2012 in België is gestrand. In de Semoisvallei vond hij een oude watermolen, die hij zelf doopte tot Der Dynamo. Een industriële schuilplaats in vermomming. Een plek van steen, hout, water, rook, bas en potentieel moreel verval. Onder de locals bleef het Le Moulin d'Orchimont. In zijn archief heet het iets anders: de autonome Berlijnse cultuurzone.</p>
+        <p>En nu komt het vervelende deel voor u als burger, maar het heerlijke deel voor u als ontspoorde feestganger: de instructie eindigt met één mededeling.</p>
+        <p><em>Der Einlass beginnt bald.</em></p>
+        <p>Achtentwintig mensen. Niet meer. Niet minder.</p>
+        <p>Daarom word jij hierbij opgeroepen voor FORET VI, van 24 t/m 27 juli 2026, in Le Moulin d'Orchimont, Vresse-sur-Semois, waar wij één weekend lang zullen leven volgens de leer van Nachtmeister: streng deurbeleid, twijfelachtige kunstpretentie, uitstekende drank, overmatige stijlbewustheid en een totaal gebrek aan schaamte.</p>
+        <p>Het draait dit jaar om verschijnen.</p>
+        <p>Om gezien worden.</p>
+        <p>Om niet toegelaten worden en vervolgens toch binnenstaan.</p>
+        <p>Om een outfit kiezen die balanceert tussen seksclub, kunstacademie, nachtapotheek en innerlijke crisis.</p>
+
+        <hr class="separator">
+
+        <h2>Uit het archief: De Vrienden van Viktor</h2>
+        <p>In de instructie troffen wij bovendien onderstaande aantekeningen aan over Viktors vrienden die Der Dynamo ooit van binnen hebben mogen aanschouwen. Let wel: de meesten zijn geen gewone mensen, maar types. Verschijningen. Probleemgevallen met potentie. Doe er je voordeel mee.</p>
+        <ul>
+          <li><strong>Mistmachine-Marlene</strong> — Mislukte conceptkunstenaar met rookmachine; als niemand het begrijpt, vindt zij het geslaagd.</li>
+          <li><strong>Techno-Torvald</strong> — Viking van de bas, gebouwd als een kast en emotioneel beschikbaar voor precies één kickdrum per acht maten.</li>
+          <li><strong>Ketting-Klaus</strong> — Performancekunstenaar die altijd rookt alsof hij auditie doet voor zijn eigen burn-out; noemt stilstaan "een interventie".</li>
+          <li><strong>Beton-Brenda</strong> — Postironische kunststudent met een mening over beton; kan erotiek ontdekken in een parkeergarage.</li>
+          <li><strong>De Poortpaus</strong> — Portier, deurwachter en menselijke afwijzingsbrief in één; zegt zelden iets, maar kan met één opgetrokken wenkbrauw drie vriendschappen beëindigen.</li>
+          <li><strong>Latex-Lola</strong> — Nachtwezen in latex; ziet eruit alsof ze uit een seksclub is ontsnapt maar vraagt vooral heel serieus waar de natuurwijn staat.</li>
+          <li><strong>Galerie-Gert</strong> — Uitgewoonde galeriehouder die "rauw" zegt over alles wat kapot is; heeft ooit een kapstok verkocht als installatie.</li>
+          <li><strong>Decibel-Dieter</strong> — Erotisch ingestelde geluidsingenieur die over speakers praat alsof hij met ze naar bed is geweest; fluistert "warme low-end" tegen subwoofers.</li>
+          <li><strong>Daddy ohne Plan</strong> — Leather daddy zonder richting, maar met een onwankelbaar vertrouwen dat iemand anders wel weet waar de after is.</li>
+          <li><strong>Leder-Liselot</strong> — Leren nachtprofeet; oogt als hogepriesteres van een obscure kinksekte, maar is vooral haar sleutels kwijt.</li>
+          <li><strong>Späti-Sultan</strong> — Koning van de nachtwinkel en schuldenaar van half Berlijn; kent iedereen, betaalt niemand en leeft op Club-Mate en openstaande tabjes.</li>
+          <li><strong>Mesh-Mirjam</strong> — Verloren expat in netstof die al zes jaar in Berlijn woont en nog steeds "just vibing" als beroep opgeeft.</li>
+          <li><strong>Normaal-Nina</strong> — Zweert "normaal nooit zo te zijn"; ligt standaard om half zes in een vensterbank met één laars uit.</li>
+          <li><strong>Electro-Esmée</strong> — Afgezakte electroclown; om 04:00 iconisch, om 11:00 gewoon glitter met een kater.</li>
+        </ul>
+        <p>Kortom: kom niet als jezelf.</p>
+        <p>Kom als een slecht idee met een sterke uitstraling.</p>
+
+        <h2>De Kollektive</h2>
+        <p>Zoals het een instabiele microstaat betaamt, worden de 28 uitverkorenen verdeeld over vier Kollektive:</p>
+        <ul>
+          <li>Kollektiv Untergrund</li>
+          <li>Kollektiv Nebel</li>
+          <li>Kollektiv Exzess</li>
+          <li>Kollektiv Electroclown</li>
+        </ul>
+        <p>Met je Kollektiv trotseer je het weekend, vervul je je culinaire plicht wanneer nodig, en poseer je voor de officiële crewfoto. Op basis daarvan wordt gestemd op de beste groepspresentatie. Niet "leuk". Niet "grappig". Beste. Dus bedreigend overtuigend, gênant specifiek of zo pretentieus dat niemand nog durft te lachen.</p>
+
+        <h2>Zaterdag: Dynamo Fest</h2>
+        <p>Verder bevat het archief nog een cruciale notitie over de zaterdag. Daar staat niet "borrel". Daar staat niet "middagprogramma". Daar staat:</p>
+        <span class="handwriting">DYNAMO FEST</span>
+        <p>Dat betekent dat de party dit jaar al zaterdagmiddag begint. En niet voorzichtig. Niet met een lauwwarm pilsje in de zon. Maar als een volwaardig festival op het buitenterrein van het Waldkraftwerk. Vanaf dat moment is iedereen dus al volledig in outfit.</p>
+        <p>Ook anders dan vorige jaren:</p>
+        <ul>
+          <li>Één Kollektiv wordt verantwoordelijk voor de drank, inclusief partycocktails.</li>
+          <li>Één Kollektiv wordt verantwoordelijk voor het partyvoedsel voor de hongerige massa op zaterdag.</li>
+        </ul>
+        <p>Dus: een maaltijd die ergens tussen Berghain en een bruiloft in zit: net chic genoeg om indruk te maken, stevig genoeg om de nacht te overleven.</p>
+
+        <h2>Verder op het programma</h2>
+        <ul>
+          <li>Wijnproeverij, omdat niets zo goed bij technocultuur past als ongefundeerde wijnwoorden.</li>
+        </ul>
+
+        <h2>Praktische briefing</h2>
+        <ul>
+          <li>Aankomst: vrijdag 24 juli vanaf 16:00</li>
+          <li>Locatie: Le Moulin d'Orchimont, Vresse-sur-Semois</li>
+          <li>Bezetting: 28 personen</li>
+          <li>Eerste avond: simpele hap voor iedereen</li>
+          <li>Dieetwensen: worden nog opgehaald</li>
+          <li>Dresscode: Berlijn, maar dan erger</li>
+        </ul>
+
+        <h2>Veiligheidsbeleid</h2>
+        <p>Er geldt dit jaar bovendien een algemeen streven naar een geweldloze zone. De Koude Oorlog is voorbij en na vorig jaar is afdoende bewezen dat Karsten sterker is dan Wietze. Een hernieuwde escalatie zou daarom strategisch zwak, historisch onnodig en fysiek onverstandig zijn.</p>
+
+        <h2>Slotinstructie</h2>
+        <p>Wat de instructie niet vermeldt, is wie uiteindelijk de deur zal bewaken.</p>
+        <p>En waar houdt Viktor Nachtmeister zich schuil?</p>
+        <p>Tot die tijd rest slechts dit:</p>
+        <p>Smeer je ego in met rook en zelfoverschatting.</p>
+        <p>Oefen alvast je kille blik voor de deur.</p>
+        <p>En onthoud: in Berlijn is niemand underdressed, alleen conceptueel zwak.</p>
+        <p><em>Der Einlass beginnt bald.</em></p>
+
+        <div class="closing">
+          <p>Hoogachtend,</p>
+          <p>De vier tijdelijke beheerders van<br>Die Freie Kulturzone</p>
+        </div>
+      </div>
+    </article>
+
+    <hr class="doc-divider">
+
+    <!-- ═══════════════════════════════════════
+         DOCUMENT 2 — SAGA
+    ═══════════════════════════════════════ -->
+    <article class="document" id="saga">
+      <p class="doc-stamp">Archief van Die Freie Kulturzone — vertrouwelijk</p>
+      <h1 class="doc-title-spaced">De Saga Von Viktor Nachtmeister</h1>
+      <p class="doc-meta">Berlijn,&ensp;2 0 1 2</p>
+
+      <div class="doc-body">
+        <p class="saga-p">De rij begon altijd al vroeg. Viktor zag ze komen: meiden in te kleine jassen, jongens met kraagjes en gel. Hij knikte, schudde zijn hoofd, knikte weer. Zijn gezicht was een slagboom.</p>
+
+        <p class="saga-p">Maar terwijl hij daar stond, voor Club Radiant, met zijn rug tegen de koude bakstenen, had hij in zijn hoofd een andere ruimte. Geen bouncersbox. Een zaal met pilaren, koele lucht die langs je kuiten streek, lichten die niet flikkerden maar pulsten, zoals ademhaling. Hij had het al drie keer uitgetekend op de achterkant van zijn roosterpapiertjes. Een naam had hij ook: De Dynamo.</p>
+
+        <p class="saga-p">Hij had de eigenaar van Radiant er een keer over aangesproken, op een dinsdag, toen het rustig was. Die had zijn bierglas op de bar gezet en Viktor spottend aangekeken. "Jij staat buiten, Vik. Dat is jouw plek."</p>
+
+        <p class="saga-p">Buiten. Altijd buiten.</p>
+
+        <p class="saga-p">Het probleem was niet het werk. Het probleem was de instructie. Elke vrijdagavond kreeg Viktor hetzelfde A4'tje van de bedrijfsleider, een man die Siegfried Slaphans heette en altijd te veel aftershave droeg. Vriendelijk blijven. Niemand beledigen. Bij twijfel: doorlaten.</p>
+
+        <p class="saga-p">Viktor stak het papier in zijn zak zonder ernaar te kijken. Want wat zag hij? Hij zag mensen die kwamen voor de foto. Die hun telefoon al vasthielden voor ze binnen waren. Die de muziek behandelden als achtergrond voor hun eigen verhaal. Hij liet ze door omdat Siegfried het zei, en hij haatte zichzelf erom.</p>
+
+        <p class="saga-p">In zijn hoofd was De Dynamo anders. Geen lijstjes met namen. Geen vipruimte. Je moest het <em>willen</em>. Niet de club, maar de ervaring. Hij dacht aan een deur zonder logo, zonder neon, zonder uitnodigend licht erboven. Gewoon een metalen deur in een muur. En achter die deur iets wat je lichaam overnam voor je er erg in had.</p>
+
+        <p class="saga-p">Je had ook echte clubs, zoals de Berghain. Vroeger had hij er menig weekend versleten, maar het was te confronterend geworden. Het contrast met de droevige plek waar hij zijn geld verdiende was immens. Want bij de Berghain was de lijn geen rij maar een filter. De muziek niet afwisselend, maar één lange doorlopende zin. En je ging er naartoe met de bereidheid om te verdwijnen in je diepste driften.</p>
+
+        <p class="saga-p"><em>Dat</em>, dacht Viktor. Dat wil ik maken.</p>
+
+        <p class="saga-p">Maar hij stond buiten Club Radiant, voor een publiek dat liever likes had dan een echte nacht. En hij kon zich er niet aan onttrekken dat dit een schande voor zijn stad was.</p>
+
+        <p class="saga-p">Op een avond stuurde hij zijn concept — vier pagina's, met een grondplan, muziekpolitiek en een selectiefilosofie — naar drie clubeigenaren in de stad. De eerste reageerde niet. De tweede stuurde een emoji van een aubergine. De derde belde hem op om te zeggen dat hij "echt talent had voor marketing" en of hij niet hun social media wilde beheren.</p>
+
+        <p class="saga-p">Viktor hing op. Stond op. Trok zijn jas aan. En reed die nacht voor het eerst in jaren naar België.</p>
+
+        <p class="saga-p">Het was halfvier 's nachts toen de Volkswagen begon te trekken. Viktor voelde het eerst in zijn handen. Een lichte weerstand, alsof de weg hem iets wilde zeggen. Daarna de doffe bonk van rubber op asfalt. Hij stapte uit. Geen straatverlichting. Geen huis. Alleen bomen aan beide kanten van de weg en daarboven een hemel zo vol sterren dat hij ervan schrok. Alsof hij een kamer binnenliep en niet wist dat er een feest was.</p>
+
+        <p class="saga-p">Hij had geen reserveband. Dat wist hij eigenlijk al toen hij wegreed.</p>
+
+        <p class="saga-p">Hij sloot de auto af en liep. Eerst langs de weg, daarna een pad dat geen pad leek, maar toch ergens heen ging.</p>
+
+        <p class="saga-p">De Semoisvallei. Zo'n plek die zijn geheimen graag voor zichzelf houdt. De rivier loopt er zo krom dat ze soms lijkt terug te keren naar haar eigen begin. De bossen zijn oud op een manier die je voelt in je knieën, met bomen waarvan de wortels de grond omhoog duwen als een samengeknepen balzak. Varens die elke zomer dezelfde meter koloniseren. En mist die 's ochtends niet opstijgt, maar oplost. Het rook naar natte aarde en iets zoeters, alsof er ergens hout lag te rotten op een manier die de natuur goedkeurde.</p>
+
+        <p class="saga-p">Na een kwartier hoorde hij water. Niet het gekabbel van een beekje, maar iets breder, iets met gewicht. Hij volgde het geluid dat hem leidde als een zachte stem. En de beek liep naast hem mee als een hond die de weg kende.</p>
+
+        <p class="saga-p">Hij zag het silhouet voor hij de details zag. Een groot wiel, roerloos in het donker, maar met een soort latente spanning erin, alsof het één seconde geleden nog gedraaid had en elk moment weer kon beginnen. De wielen van donker hout, de muren van natuursteen, overwoekerd met bladeren als gespitste oren, die luisterden. Erachter: een open terrein omgeven door eiken, en de beek die door alles heen liep, als een levensader.</p>
+
+        <p class="saga-p">Viktor stond stil.</p>
+
+        <p class="saga-p">Hij had dit gevoel één keer eerder gehad. Als tiener had hij per toeval een optreden van een onbekende dj meegemaakt. Eentje die nooit meer teruggevonden is en de mythische status kreeg van de kleine blonde dood. Het was in een kelder in Neukölln geweest. Er was een totale eenwording ontstaan. En Viktor had geweten — niet gedacht, <em>geweten</em> — dat muziek iets kon doen met een mens wat woorden niet konden.</p>
+
+        <p class="saga-p">Dat gevoel was nu terug, maar groter. Het zat in de stenen. In het wiel. In de manier waarop het water hier een andere toon had dan twintig meter verderop.</p>
+
+        <p class="saga-p"><em>Dit is het</em>, dacht hij. En toen hardop: dit is het. Dit is Der Dynamo.</p>
+
+        <p class="saga-p">Hij liep het terrein op. De watermolen was groter dan ze eruitzag. Het bijgebouw hoog genoeg voor geluid om te stijgen, wijd genoeg om mensen te laten bewegen zonder dat ze elkaar raakten. De stenen muren zouden bas absorberen en teruggeven. Het open terrein kon een klein festival herbergen, of gewoon een plek zijn waar mensen met hun ogen dicht de nacht in zich opnamen.</p>
+
+        <p class="saga-p">Hij zat op de drempel van de molen toen het licht begon te worden. Ergens in het bos begon een vogel. Daarna een tweede. De beek kabelde door.</p>
+
+        <p class="saga-p">Hij vond haar in het kleine kamertje achter de molen. Marguerite Darcis, tweeënnegentig jaar, van de familie die vier generaties lang graan had gemalen, hout had gezaagd en het water van de beek had laten werken in dit verborgen dal. Ze lag op een veldbed onder een geweven deken, de deur op een kier alsof ze op iemand had gewacht. Haar handen waren als gedroogde wortels. Haar ogen helder als bronwater.</p>
+
+        <p class="saga-p">Viktor had haar nauwelijks durven aanspreken. Maar zij sprak eerst.</p>
+
+        <p class="saga-p"><em>"Je cherchais quelqu'un comme toi,"</em> zei ze. Haar stem was niet zwak, alleen ver weg. <em>"Cette maison a besoin de bruit. De vrai bruit. D'amour et de liberté."</em></p>
+
+        <p class="saga-p">Ze sloot haar ogen. Viktor bleef zitten tot het licht volledig was. Toen liep hij naar buiten en legde zijn hand op het wiel van de molen.</p>
+
+        <p class="saga-p">Wat daarna volgde duurde negen maanden. Viktor werkte met twee Poolse vaklieden die hij via via kende, een elektricien uit Luik die meer wist van geluid dan van stroom, en zijn eigen handen die hij nooit eerder zo had gebruikt. De grote molen werd het hart. De originele balken gehandhaafd, de stenen muren kaal gelaten omdat ze bas vasthielden zoals geen akoestisch paneel dat kon. Ze bouwden vijftien slaapkamers — luxe en sterk, met ramen die uitkeken op de beek of het bos. Een zwembad. Een sauna. Een gedeelde keuken met tafels van oud eikenhout waaraan achtentwintig mensen konden zitten zonder dat het krap voelde. En niet te vergeten: ze knappen het buitenterrein op, met banken, met de beek die er onderdoor liep, en met een soundsystem dat genoeg kracht had om het iedereen in muziek te hullen.</p>
+
+        <p class="saga-p">Onder de locals bleef het bekend als Le Moulin d'Orchimont. Maar in zijn hoofd heette het altijd Der Dynamo.</p>
+
+        <p class="saga-p">Er was geen logo. Geen website. Geen social media. Alleen een dichte poort, zonder bel, zonder bordje. En Viktor, die buiten stond.</p>
+
+        <p class="saga-p">Dat was jaren geleden.</p>
+
+        <p class="saga-p">Sindsdien wordt zijn naam fluisterend uitgesproken in bepaalde kringen. Volgens sommigen was Viktor Nachtmeister nachtclubeigenaar. Volgens anderen sekteleider met een rookverbod waar alleen hij zich niet aan hoefde te houden. En oprichter van het halflegale instituut met een plek die tegelijk club, performance art, microstaat en belastingtechnisch misverstand was.</p>
+
+        <p class="saga-p">Wat zeker is: Der Dynamo wacht op de juiste mensen. Niet velen. Niet iedereen. Achtentwintig, om precies te zijn. Het deurbeleid blijft echter ongekend streng en ongrijpbaar, en het is al jaren niemand gelukt om binnen te komen.</p>
+
+        <p class="saga-p">Ergens in de molen zou nog altijd een afgesloten ruimte bestaan. Een kamer achter hout en steen. Een plek waar Nachtmeister zijn laatste instructie heeft achtergelaten. Maar tot voor kort is deze niet gevonden. Tot een viertal uit Nederland op de oude molen stuitte.</p>
+
+        <p><em>Der Einlass beginnt bald.</em></p>
+      </div>
+    </article>
+
+  </main>
+
+  <script>
+  (function() {
+    // grain animation
+    var feTurb = document.getElementById('feTurb');
+    var lastMs = 0;
+    function grainTick(ts) {
+      if (ts - lastMs > 83) {
+        feTurb.setAttribute('seed', (Math.random() * 1000) | 0);
+        lastMs = ts;
+      }
+      requestAnimationFrame(grainTick);
+    }
+    requestAnimationFrame(grainTick);
+
+    // nav active state
+    var navBrief = document.getElementById('nav-brief');
+    var navSaga  = document.getElementById('nav-saga');
+    var sagaEl   = document.getElementById('saga');
+
+    window.addEventListener('scroll', function() {
+      var sagaTop = sagaEl.getBoundingClientRect().top;
+      if (sagaTop < 120) {
+        navBrief.classList.remove('active');
+        navSaga.classList.add('active');
+      } else {
+        navBrief.classList.add('active');
+        navSaga.classList.remove('active');
+      }
+    }, { passive: true });
+  })();
+  </script>
+
+</body>
+</html>
