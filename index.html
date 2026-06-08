@@ -607,7 +607,7 @@
       <div class="club-slide">
         <p class="s-final">DU BIST<br>EINGELADEN.</p>
         <p class="s-rsvp" id="detail-rsvp">Antworte auf diese Einladung</p>
-        <a href="archief.html" class="archief-btn">Lees de uitnodiging →</a>
+        <a href="archief.html" class="archief-btn" target="_blank" rel="noopener">Lees de uitnodiging →</a>
       </div>
 
       <!-- Slide 5: Teams -->
@@ -1191,14 +1191,8 @@
     window.addEventListener('resize', function() { resizeCrowd(); buildSilhouettes(); });
     requestAnimationFrame(grainTick);
 
-    if (sessionStorage.getItem('returnToClub')) {
-      sessionStorage.removeItem('returnToClub');
-      $('btn-skip').style.display = 'none';
-      showScreen('club');
-    } else {
-      switchVideo('entry');
-      attachEntry();
-    }
+    switchVideo('entry');
+    attachEntry();
 
   })();
   </script>
