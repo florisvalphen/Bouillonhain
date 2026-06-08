@@ -398,6 +398,28 @@
     .skip-btn:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.3); }
 
     /* ────────────────────────────────
+       ARCHIEF BUTTON (slide 4)
+    ──────────────────────────────── */
+    .archief-btn {
+      display: block; margin-top: 2.8rem;
+      padding: 1.05rem 1.4rem;
+      border: 1px solid rgba(255,255,255,0.38);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-family: 'IBM Plex Mono','Courier New',monospace;
+      font-size: clamp(0.7rem, 3vw, 0.88rem);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      text-decoration: none; text-align: center;
+      cursor: pointer; -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.25s, background 0.25s;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.95);
+    }
+    .archief-btn:hover, .archief-btn:active {
+      border-color: rgba(255,255,255,0.75);
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ────────────────────────────────
        TEAM GRID (slide 5)
     ──────────────────────────────── */
     .team-grid {
@@ -581,11 +603,11 @@
         <p class="s-value" id="detail-location">Vresse-sur-Semois<br>a.k.a. BouillonHain</p>
       </div>
 
-      <!-- Slide 4: Uitnodiging placeholder -->
+      <!-- Slide 4: Uitnodiging -->
       <div class="club-slide">
         <p class="s-final">DU BIST<br>EINGELADEN.</p>
         <p class="s-rsvp" id="detail-rsvp">Antworte auf diese Einladung</p>
-        <a href="archief.html" style="display:inline-block;margin-top:2rem;font-family:'IBM Plex Mono','Courier New',monospace;font-size:0.55rem;letter-spacing:0.42em;text-transform:uppercase;color:rgba(255,255,255,0.28);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.12);padding-bottom:2px;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.6)'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">Archief →</a>
+        <a href="archief.html" class="archief-btn">Lees de uitnodiging →</a>
       </div>
 
       <!-- Slide 5: Teams -->
@@ -1168,8 +1190,15 @@
     buildSilhouettes();
     window.addEventListener('resize', function() { resizeCrowd(); buildSilhouettes(); });
     requestAnimationFrame(grainTick);
-    switchVideo('entry');
-    attachEntry();
+
+    if (window.location.hash === '#club') {
+      history.replaceState(null, '', window.location.pathname);
+      $('btn-skip').style.display = 'none';
+      showScreen('club');
+    } else {
+      switchVideo('entry');
+      attachEntry();
+    }
 
   })();
   </script>
