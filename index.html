@@ -430,21 +430,6 @@
       text-shadow: 0 1px 8px rgba(0,0,0,0.9);
     }
 
-    /* ────────────────────────────────
-       SKIP BUTTON
-    ──────────────────────────────── */
-    .skip-btn {
-      position: fixed; bottom: 1.6rem; right: 1.6rem; z-index: 60;
-      background: transparent; border: 1px solid rgba(255,255,255,0.12);
-      color: rgba(255,255,255,0.22);
-      font-family: 'IBM Plex Mono','Courier New',monospace;
-      font-size: 0.52rem; letter-spacing: 0.4em; text-transform: uppercase;
-      cursor: pointer; padding: 0.45rem 0.8rem;
-      -webkit-tap-highlight-color: transparent;
-      transition: color 0.2s, border-color 0.2s;
-    }
-    .skip-btn:hover { color: rgba(255,255,255,0.45); border-color: rgba(255,255,255,0.3); }
-
     /* ── REDUCED MOTION ── */
     @media (prefers-reduced-motion: reduce) {
       .strobe-overlay.firing { animation:none; opacity:0 }
@@ -480,8 +465,6 @@
   <div class="strobe-overlay" id="strobe" aria-hidden="true"></div>
 
   <!-- Skip queue button -->
-  <button class="skip-btn" id="btn-skip" style="display:none">direkt rein</button>
-
   <!-- ── SCREEN 1: ENTRY ── -->
   <section class="screen active" id="screen-entry">
     <div class="entry-wrap">
@@ -1164,17 +1147,9 @@
     }
 
     function onEntry() {
-      $('btn-skip').style.display = 'none';
       initAudio();
       showScreen('queue');
     }
-
-    $('btn-skip').addEventListener('click', function() {
-      $('btn-skip').style.display = 'none';
-      $('screen-entry').removeEventListener('click', onEntry);
-      initAudio();
-      showScreen('club');
-    });
 
     $('btn-reset').addEventListener('click', function() {
       stopQueueRotation();
@@ -1182,7 +1157,6 @@
       hideVideo();
       crowdStop();
       crowdHide();
-      $('btn-skip').style.display = '';
       showScreen('entry');
       attachEntry();
     });
