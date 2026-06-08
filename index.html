@@ -401,22 +401,22 @@
        ARCHIEF BUTTON (slide 4)
     ──────────────────────────────── */
     .archief-btn {
-      display: block; margin-top: 2.8rem;
-      padding: 1.05rem 1.4rem;
-      border: 1px solid rgba(255,255,255,0.38);
-      background: rgba(255,255,255,0.04);
+      display: block; margin-top: 3rem;
+      padding: 1.5rem 2rem;
+      border: 1px solid rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.06);
       color: #fff;
       font-family: 'IBM Plex Mono','Courier New',monospace;
-      font-size: clamp(0.7rem, 3vw, 0.88rem);
-      letter-spacing: 0.28em; text-transform: uppercase;
+      font-size: clamp(0.9rem, 4.2vw, 1.15rem);
+      letter-spacing: 0.22em; text-transform: uppercase;
       text-decoration: none; text-align: center;
       cursor: pointer; -webkit-tap-highlight-color: transparent;
-      transition: border-color 0.25s, background 0.25s;
+      transition: border-color 0.2s, background 0.2s;
       text-shadow: 0 2px 16px rgba(0,0,0,0.95);
     }
     .archief-btn:hover, .archief-btn:active {
-      border-color: rgba(255,255,255,0.75);
-      background: rgba(255,255,255,0.1);
+      border-color: #fff;
+      background: rgba(255,255,255,0.12);
     }
 
     /* ────────────────────────────────
@@ -1191,8 +1191,8 @@
     window.addEventListener('resize', function() { resizeCrowd(); buildSilhouettes(); });
     requestAnimationFrame(grainTick);
 
-    if (window.location.hash === '#club') {
-      history.replaceState(null, '', window.location.pathname);
+    if (sessionStorage.getItem('returnToClub')) {
+      sessionStorage.removeItem('returnToClub');
       $('btn-skip').style.display = 'none';
       showScreen('club');
     } else {
